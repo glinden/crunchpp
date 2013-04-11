@@ -30,9 +30,9 @@ var PI2 = Math.PI * 2;
 var worldSize = {x: 100, z: 100};
 var worldHalfSize = {x: worldSize.x / 2, z: worldSize.z / 2};
 var waveSize = {x: 8 / worldSize.x, z: 12 / worldSize.z};
-var waveHeight = 500 / worldSize.z;
-var waveSpeed = 8 / worldSize.z;
 var particleSize = worldSize.z / 50;
+var waveHeight = 1000 / worldSize.z / particleSize;
+var waveSpeed = 8 / worldSize.z;
 var friction = 0.98;
 var repelStrength = 0.02;
 var randomMoveLikelihood = 0.01;
@@ -41,6 +41,7 @@ var ambientEnergy = 0.04, playerHunger = -ambientEnergy;
 var attackDistance = 5;
 var playerAttack = ambientEnergy * 50, playerAttackPain = 0.1, carcassEnergy = 15;
 var mouseAttraction = 0.0005, mouseVmax = 0.01;
+var viewAngle = 15;  // In degrees
 
 // Globals
 var particles = [], playerParticle, waveTick = 0;
@@ -79,10 +80,15 @@ Array.prototype.shuffle = function () {
 function init() {
 	scene = new THREE.Scene();
 
-	// Put a camera above the world plane 
-	camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 1, 10000 );
+	// Put a camera above the world plane
+	camera = new THREE.PerspectiveCamera( viewAngle, window.innerWidth / window.innerHeight, 1, 10000 );
 	camera.position.z = worldSize.z / 20;
-	camera.position.y = worldSize.z * 4.2;
+	// A bit of a hack here to position the camera so all of the game
+	// board is visible regardless of window size.  It calculates the
+	// distance away the camera has to be for the view angle for the board
+	// to fill the window (or attempts to anyway).
+	camera.position.y = (worldHalfSize.z + waveHeight) / Math.tan(viewAngle / 2 * PI2 / 360);
+	camera.position.y /= Math.min(1.0, window.innerWidth / (window.innerHeight + 1));
 	camera.lookAt( scene.position );
 	projector = new THREE.Projector();
 
@@ -198,6 +204,13 @@ function onWindowResize() {
 
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
+	// A bit of a hack here to position the camera so all of the game
+	// board is visible regardless of window size.  It calculates the
+	// distance away the camera has to be for the view angle for the board
+	// to fill the window (or attempts to anyway).
+	camera.position.y = (worldHalfSize.z + waveHeight) / Math.tan(viewAngle / 2 * PI2 / 360);
+	camera.position.y /= Math.min(1.0, window.innerWidth / (window.innerHeight + 1));
+	camera.lookAt( scene.position );
 
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
