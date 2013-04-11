@@ -1,0 +1,50 @@
+body {
+	background-color: #000000;
+	margin: 0px;
+	overflow: hidden;
+}
+#level {
+	position: absolute; 
+	top: 0px; 
+	width: 80px; 
+	font-weight: bold; 
+	color: #aaa; 
+	font-family: monospace; 
+	font-size: 12px;
+}
+#score {
+	position: absolute; 
+	right: 0px; 
+	top: 0px; 
+	width: 80px; 
+	font-weight: bold; 
+	color: #aaa; 
+	font-family: monospace; 
+	font-size: 12px;
+}
+#complete {
+	position: absolute; 
+	margin: auto;
+	width: 100%;
+	top: 200px;
+	text-align:center;
+	font-weight: bold; 
+	color: #0f0;
+	font-family: monospace; 
+	font-size: 60px;
+	opacity: 1.0;
+	display: none;
+}
+#gameover {
+	position: absolute; 
+	margin: auto;
+	width: 100%;
+	top: 200px;
+	text-align:center;
+	font-weight: bold; 
+	color: #f00;
+	font-family: monospace; 
+	font-size: 72px;
+	opacity: 1.0;
+	display: none;
+}
