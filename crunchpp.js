@@ -23,6 +23,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// Crunchpp
+// A simple but fun WebGL game.  Move the mouse over the green
+// disks to attack them, but don't try to take on too many at once.
+// Code demonstrates using Three.js, having WebGL fall back to canvas,
+// and a simple constraint simulation.
+
 // Constants
 var numParticles = 5;
 var maxParticles = 200;
@@ -43,17 +49,15 @@ var playerAttack = ambientEnergy * 50, playerAttackPain = 0.1, carcassEnergy = 1
 var mouseAttraction = 0.0005, mouseVmax = 0.01;
 var viewAngle = 15;  // In degrees
 
-// Globals
+// Game globals
 var particles = [], playerParticle, waveTick = 0;
-var useWebGL = hasWebGL();
 var level = 1;
 
 // UI globals
 var mouseLocation = {x: 0, y: 0};
 var windowHalf = {x: window.innerWidth / 2, y: window.innerHeight / 2};
-
-// Three JS graphics globals
 var camera, scene, renderer, canvas, projector, pointLight;
+var useWebGL = hasWebGL();
 
 // Convenience functions
 function sq(x) { return x * x; }
@@ -83,10 +87,10 @@ function init() {
 	// Put a camera above the world plane
 	camera = new THREE.PerspectiveCamera( viewAngle, window.innerWidth / window.innerHeight, 1, 10000 );
 	camera.position.z = worldSize.z / 20;
-	// A bit of a hack here to position the camera so all of the game
-	// board is visible regardless of window size.  It calculates the
-	// distance away the camera has to be for the view angle for the board
-	// to fill the window (or attempts to anyway).
+	// Position the camera so all of the game board is visible
+	// regardless of window size.  It calculates the distance away the
+	// camera has to be for the view angle for the board to fill the
+	// window.
 	camera.position.y = (worldHalfSize.z + waveHeight) / Math.tan(viewAngle / 2 * PI2 / 360);
 	camera.position.y /= Math.min(1.0, window.innerWidth / (window.innerHeight + 1));
 	camera.lookAt( scene.position );
@@ -109,7 +113,7 @@ function init() {
 	if (useWebGL) {
 		renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } )
 		
-		// Also add some lighting
+		// Add some lighting
 		scene.add(new THREE.AmbientLight(0x333333));
 		pointLight = new THREE.PointLight(0xffffff, 1);
 		pointLight.position.set(0, 20, 0);
@@ -204,10 +208,10 @@ function onWindowResize() {
 
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-	// A bit of a hack here to position the camera so all of the game
-	// board is visible regardless of window size.  It calculates the
-	// distance away the camera has to be for the view angle for the board
-	// to fill the window (or attempts to anyway).
+	// Position the camera so all of the game board is visible
+	// regardless of window size.  It calculates the distance away the
+	// camera has to be for the view angle for the board to fill the
+	// window.
 	camera.position.y = (worldHalfSize.z + waveHeight) / Math.tan(viewAngle / 2 * PI2 / 360);
 	camera.position.y /= Math.min(1.0, window.innerWidth / (window.innerHeight + 1));
 	camera.lookAt( scene.position );
@@ -229,15 +233,16 @@ function update() {
 
 	// Did the player win this level or lose the game?
 	if (gameOrLevelOver()) {
-		// When this returns true, we're supposed to pause the game, so skip 
-		// all the rest
+		// When this returns true, we should pause the game, so skip 
+		// all the rest of update()
 		return;
 	}
 
-	// Food particle breed and die depending on their energy
+	// Food particles breed and die depending on their energy
 	birthAndDeath();
 
-	// Re-compute all distances of all particles to each other (need this later)
+	// Re-compute all distances of all particles to each other (so we
+	// can use it later)
 	recomputeDistances();
 
 	// Main loop for updating the velocities and energies of the particles
@@ -265,7 +270,7 @@ function update() {
 			p.energy += playerHunger;  // Negative ambient energy for player
 
 			// Attack something nearby.  Player can only attack one enemy at a time,
-			// which makes it hard to attack large groups (intentionally).
+			// which is designed to make it hard to attack large groups.
 			var killedSomething = false;
 			var preyCandidates = [];
 			for (var j = 0; j < particles.length; j++) {
