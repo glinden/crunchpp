@@ -1,9 +1,6 @@
 Crunchpp is a HTML5 WebGL game.  It works best in Chrome, but plays in
 most recent browsers and on some mobile devices (falling back to
-2D and dropping sound as necessary).  It is publicly available at
-
-http://crunchzilla.com/crunchpp
-https://github.com/glinden/crunchpp
+2D and dropping sound as necessary).
 
 This is a simple game where you are a predator attacking prey.  You
 slowly lose energy to hunger and when attacking prey, but gain energy
